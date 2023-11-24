@@ -51,19 +51,33 @@ class Logic:
 
         return data
 
+    # вернуть всех гол + ассист
+    @staticmethod
+    def top_assists_goals(db):
+        players = db.get_players()
+        data = list()
+
+        for player in players:
+            if player.number_of_assists > 0 or player.number_of_goals > 0:
+                data.append(Transformation.dict_player(db, player))
+
+        data.sort(key=lambda x: x['number_of_assists'] + x['number_of_goals'], reverse=True)
+
+        return data
+
     # вернуть расписание по турам
     @staticmethod
     def get_schedule(db):
         data = list()
 
-        for i in range(1,4):
+        for i in range(1, 4):
             pre_data = list()
             db.get_schedule(i)
 
             for item in db.get_schedule(i):
                 pre_data.append(Transformation.dict_schedule(db, item))
 
-            data.append(pre_data)
+            data.append({'id': i, 'res': pre_data})
 
         return data
 
@@ -78,6 +92,12 @@ class Logic:
 
         return data
 
+    @staticmethod
+    def get_admins(db):
+        data = list()
+        admins = db.get_admins()
 
+        for admin in admins:
+            data.append(Transformation.dict_admins(admin))
 
-
+        return data

@@ -22,7 +22,7 @@ class Transformation:
                 'second_team': schedule.second_team,
                 'first_logo': first_team_logo,
                 'second_logo': second_team_logo,
-                'match_date': str(schedule.match_date),
+                'match_date': schedule.match_date,
                 'goal_first': schedule.goal_first,
                 'goal_second': schedule.goal_second,
                 'tour_number': schedule.tour_number}
@@ -54,7 +54,7 @@ class Transformation:
     def dict_team(db, team):
         players = db.get_players_team(team.team_name)
         player_in_team = list()
-
+        goals = 0
         for player in players:
             photo = Transformation.dict_gallery(db, [player.photo])
 
@@ -72,16 +72,17 @@ class Transformation:
                    'city': player.city,
                    'role': player.role
                    }
+            goals += player.number_of_goals
             player_in_team.append(arr)
 
         captain = db.get_player_info_id(team.captain)
 
         schedule = list()
         schedule_all = db.get_all_schedule()
-        if schedule:
+        if schedule_all:
             for item in schedule_all:
                 if item.first_team == team.team_name or item.second_team == team.team_name:
-                    schedule.append(Transformation.dict_schedule(item))
+                    schedule.append(Transformation.dict_schedule(db, item))
 
         logo = Transformation.dict_gallery(db, [team.logo])
         gallery = Transformation.dict_gallery(db, list(map(int, team.gallery.split(','))))
@@ -92,20 +93,28 @@ class Transformation:
                 'captain': f'{captain.surname} {captain.name} {captain.lastname}',
                 'players': player_in_team,
                 'place_in_the_tournament': team.place_in_the_tournament,
-                'games_played': team.games_played,
+                'games_played': team.victory + team.defeat + team.draw,
                 'vk': team.vk,
                 'schedule': schedule,
                 'victory': team.victory,
                 'defeat': team.defeat,
                 'draw': team.draw,
-                'goals_scored': team.goals_scored,
+                'goals_scored': goals,
                 'missed_goals': team.missed_goals,
-                'score': team.score
+                'score': team.victory * 3 + team.draw,
                 }
 
         return data
 
+    @staticmethod
+    def dict_admins(admin):
+        data = {
+            'name': admin.name,
+            'photo': admin.photo,
+            'tg': admin.tg,
+        }
 
+        return data
 
 
 if __name__ == '__main__':

@@ -6,6 +6,10 @@ from utils import config_parser
 from flask import Flask, request
 from flask_cors import cross_origin
 
+
+from app.archive.archiving import Acrhiving
+from app.archive.unzipping import Unzipping
+
 from app.db.interaction.iteraction import DbIteraction
 from app.treatment.logic import Logic
 
@@ -29,13 +33,14 @@ class Server():
 
         self.app = Flask(__name__)
 
-
         self.app.add_url_rule('/GetTeam/<team_name>', view_func=self.get_team_by_name)
         self.app.add_url_rule('/GetTeams', view_func=self.get_teams)
         self.app.add_url_rule('/GetSchedule', view_func=self.get_schedule)
         self.app.add_url_rule('/GetGoals', view_func=self.get_top_goals)
         self.app.add_url_rule('/GetAssists', view_func=self.get_top_assists)
         self.app.add_url_rule('/GetGallery', view_func=self.get_gallery)
+        self.app.add_url_rule('/GetHistory', view_func=self.archive)
+        self.app.add_url_rule('/GetAdmins', view_func=self.get_gallery)
 
 
     def run_server(self):
@@ -50,7 +55,6 @@ class Server():
     @cross_origin()
     def get_teams(self):
         return Logic.teams(self.db)
-
 
     @cross_origin()
     def get_schedule(self):
@@ -68,6 +72,13 @@ class Server():
     def get_gallery(self):
         return Logic.get_gallery(self.db)
 
+    @cross_origin()
+    def get_admins(self):
+        return Logic.get_admins(self.db)
+
+    @cross_origin()
+    def archive(self):
+        return Unzipping.unzipp_the_tournaments()
 
 
 
@@ -83,6 +94,8 @@ if __name__ == '__main__':
     db_password = config['DB_PASSWORD']
     db_name = config['DB_NAME']
 
+
+
     server = Server(host=server_host,
                     port=server_port,
                     db_host=db_host,
@@ -92,3 +105,4 @@ if __name__ == '__main__':
                     db_name=db_name)
 
     server.run_server()
+

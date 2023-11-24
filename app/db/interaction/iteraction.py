@@ -1,5 +1,5 @@
 from app.db.client.client import MySQLConnection
-from app.db.models.models import Base, Player, Team, Gallery, Schedule
+from app.db.models.models import Base, Player, Team, Gallery, Schedule, Admin
 
 
 class DbIteraction:
@@ -86,6 +86,12 @@ class DbIteraction:
             self.mysql_connection.session.expire_all()
             return schedule
 
+    def get_admins(self):
+        admins = self.mysql_connection.session.query(Admin).all()
+
+        if admins:
+            self.mysql_connection.session.expire_all()
+            return admins
 
 if __name__ == '__main__':
     db = DbIteraction(
