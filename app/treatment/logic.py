@@ -97,10 +97,15 @@ class Logic:
     @staticmethod
     def get_admins(db):
         data = list()
+        dat = list()
         admins = db.get_admins()
-
-        for admin in admins:
-            data.append(Transformation.dict_admins(admin))
+        func = ['тех','медиа', 'cудьи', 'руководство']
+        for i in func:
+            for admin in admins:
+                if admin.function == i:
+                    dat.append(Transformation.dict_admins(admin))
+            data.append({func: dat})
+            dat = list()
 
         return data
 

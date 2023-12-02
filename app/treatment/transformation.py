@@ -104,6 +104,7 @@ class Transformation:
             'photo': admin.photo,
             'tg': admin.tg,
             'job': admin.job,
+            'function': admin.function,
         }
         return data
 

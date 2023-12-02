@@ -78,6 +78,7 @@ class Admin(Base):
     __tablename__ = 'admin'
     id = Column(Integer, primary_key=True, autoincrement=True, nullable=False)
 
+    function = Column(VARCHAR(50), nullable=False)
     name = Column(VARCHAR(50), nullable=False)
     photo = Column(VARCHAR(200))
     tg = Column(VARCHAR(200))
