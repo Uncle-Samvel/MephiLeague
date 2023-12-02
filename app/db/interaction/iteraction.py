@@ -52,12 +52,6 @@ class DbIteraction:
             self.mysql_connection.session.expire_all()
             return teams
 
-    def get_gallery(self, photo_id):
-        photo = self.mysql_connection.session.query(Gallery).filter_by(id=photo_id).first()
-
-        if photo:
-            self.mysql_connection.session.expire_all()
-            return photo
 
     def get_all_gallery(self):
         gallery = self.mysql_connection.session.query(Gallery).all()
@@ -100,5 +94,5 @@ if __name__ == '__main__':
         user='root',
         password='pass',
         db_name='MephiLeague',
-        rebuild_db=False
+        rebuild_db=False,
     )

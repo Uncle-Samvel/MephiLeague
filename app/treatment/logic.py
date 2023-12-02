@@ -1,5 +1,5 @@
 from app.treatment.transformation import Transformation
-
+import datetime
 
 class Logic:
 
@@ -88,10 +88,12 @@ class Logic:
         gallery = db.get_all_gallery()
 
         for photo in gallery:
-            data.append(photo.url)
+            if photo.PIN == 'G':
+                data.append(photo.url)
 
         return data
 
+    # вернуть администраторов
     @staticmethod
     def get_admins(db):
         data = list()
@@ -99,5 +101,33 @@ class Logic:
 
         for admin in admins:
             data.append(Transformation.dict_admins(admin))
+
+        return data
+
+    # главная страница
+    @staticmethod
+    def get_main(db):
+        schedule = db.get_all_schedule()
+        data_schedule = list()
+        for item in schedule:
+            data_schedule.append(Transformation.dict_schedule(db,item))
+
+        data_schedule = sorted(data_schedule, key=lambda date: datetime.datetime.strptime(date['match_date'], '%d.%m.%Y'), reverse=True)
+        match = 0
+
+        today_date = datetime.date.today()
+        current_date_object = datetime.datetime.strptime(str(today_date), '%Y-%m-%d')
+
+
+        for item in data_schedule:
+            date_object = datetime.datetime.strptime(item['match_date'] + ' 00:00:00', '%d.%m.%Y %H:%M:%S')
+            if date_object > current_date_object:
+                match = item
+
+        data = {
+            'best_goal': Logic.top_goals(db)[0],
+            'best_assists': Logic.top_assists(db)[0],
+            'match': match,
+        }
 
         return data

@@ -3,15 +3,8 @@ from app.db.interaction.iteraction import DbIteraction
 
 class Transformation:
     @staticmethod
-    def dict_gallery(db, list_photo):
-        data = list()
-
-        for photo in list_photo:
-            phot = db.get_gallery(photo)
-            arr = {'url': phot.url}
-            data.append(arr)
-
-        return data
+    def dict_photo(db, photo):
+        return {'url': photo.url}
 
     @staticmethod
     def dict_schedule(db, schedule):
@@ -31,13 +24,11 @@ class Transformation:
 
     @staticmethod
     def dict_player(db, player):
-        photo = Transformation.dict_gallery(db, [player.photo])
-
         data = {'name': player.name,
                 'surname': player.surname,
                 'lastname': player.lastname,
                 'team': player.team,
-                'photo': photo,
+                'photo': player.photo,
                 'number_of_matches': player.number_of_matches,
                 'number_of_goals': player.number_of_goals,
                 'number_of_assists': player.number_of_assists,
@@ -56,13 +47,11 @@ class Transformation:
         player_in_team = list()
         goals = 0
         for player in players:
-            photo = Transformation.dict_gallery(db, [player.photo])
-
             arr = {'name': player.name,
                    'surname': player.surname,
                    'lastname': player.lastname,
                    'team': player.team,
-                   'photo': photo,
+                   'photo': player.photo,
                    'number_of_matches': player.number_of_matches,
                    'number_of_goals': player.number_of_goals,
                    'number_of_assists': player.number_of_assists,
@@ -84,15 +73,17 @@ class Transformation:
                 if item.first_team == team.team_name or item.second_team == team.team_name:
                     schedule.append(Transformation.dict_schedule(db, item))
 
-        logo = Transformation.dict_gallery(db, [team.logo])
-        gallery = Transformation.dict_gallery(db, list(map(int, team.gallery.split(','))))
+        gallery_raw = db.get_all_gallery()
+        gallery = list()
+        for photo in gallery_raw:
+            if photo.PIN == team.team_name:
+                gallery.append(Transformation.dict_photo(photo))
 
         data = {'team_name': team.team_name,
-                'logo': logo,
+                'logo': team.logo,
                 'gallery': gallery,
                 'captain': f'{captain.surname} {captain.name} {captain.lastname}',
                 'players': player_in_team,
-                'place_in_the_tournament': team.place_in_the_tournament,
                 'games_played': team.victory + team.defeat + team.draw,
                 'vk': team.vk,
                 'schedule': schedule,
@@ -112,8 +103,8 @@ class Transformation:
             'name': admin.name,
             'photo': admin.photo,
             'tg': admin.tg,
+            'job': admin.job,
         }
-
         return data
 
 

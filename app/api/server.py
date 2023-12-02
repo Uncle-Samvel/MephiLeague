@@ -40,7 +40,8 @@ class Server():
         self.app.add_url_rule('/GetAssists', view_func=self.get_top_assists)
         self.app.add_url_rule('/GetGallery', view_func=self.get_gallery)
         self.app.add_url_rule('/GetHistory', view_func=self.archive)
-        self.app.add_url_rule('/GetAdmins', view_func=self.get_gallery)
+        self.app.add_url_rule('/GetAdmins', view_func=self.get_admins)
+        self.app.add_url_rule('/GetMain', view_func=self.main)
 
 
     def run_server(self):
@@ -80,6 +81,10 @@ class Server():
     def archive(self):
         return Unzipping.unzipp_the_tournaments()
 
+    @cross_origin()
+    def main(self):
+        return Logic.get_main(self.db)
+
 
 
 
@@ -96,13 +101,15 @@ if __name__ == '__main__':
 
 
 
-    server = Server(host=server_host,
-                    port=server_port,
-                    db_host=db_host,
-                    db_port=db_port,
-                    db_user=db_user,
-                    db_password=db_password,
-                    db_name=db_name)
+    server = Server(
+        host=server_host,
+        port=server_port,
+        db_host=db_host,
+        db_port=db_port,
+        db_user=db_user,
+        db_password=db_password,
+        db_name=db_name,
+    )
 
     server.run_server()
 

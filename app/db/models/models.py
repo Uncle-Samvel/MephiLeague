@@ -1,4 +1,4 @@
-from sqlalchemy import Column, Integer, ForeignKey, VARCHAR, UniqueConstraint, Date, PickleType
+from sqlalchemy import Column, Integer, ForeignKey, VARCHAR, UniqueConstraint
 from sqlalchemy.ext.declarative import declarative_base
 
 Base = declarative_base()
@@ -9,7 +9,7 @@ class Gallery(Base):
 
     id = Column(Integer, primary_key=True, autoincrement=True, nullable=False)
     url = Column(VARCHAR(200), nullable=False)
-
+    PIN = Column(VARCHAR(25), nullable=False)
     UniqueConstraint(url)
 
 
@@ -18,23 +18,17 @@ class Team(Base):
 
     id = Column(Integer, primary_key=True, autoincrement=True, nullable=False)
     team_name = Column(VARCHAR(30), nullable=False)
-    logo = Column(Integer, ForeignKey(f'{Gallery.__tablename__}.{Gallery.id.name}'), nullable=False)
-    gallery = Column(VARCHAR(200))
+    logo = Column(VARCHAR(200))
 
     captain = Column(Integer, nullable=False)
 
-    place_in_the_tournament = Column(Integer, nullable=False)
-
     vk = Column(VARCHAR(200), nullable=False)
 
-    # games_played = Column(Integer, nullable=False)
     victory = Column(Integer, nullable=False)
     defeat = Column(Integer, nullable=False)
     draw = Column(Integer, nullable=False)
 
-    # goals_scored = Column(Integer, nullable=False)
     missed_goals = Column(Integer, nullable=False)
-    # score = Column(Integer, nullable=False)
 
     UniqueConstraint(team_name)
 
@@ -50,7 +44,7 @@ class Player(Base):
 
     team = Column(VARCHAR(30), nullable=False)
 
-    photo = Column(Integer, ForeignKey(f'{Gallery.__tablename__}.{Gallery.id.name}'), nullable=False)
+    photo = Column(VARCHAR(200))
 
     number_of_matches = Column(Integer, nullable=False)
     number_of_goals = Column(Integer, nullable=False)
@@ -79,11 +73,12 @@ class Schedule(Base):
 
     tour_number = Column(Integer, nullable=False)
 
-class Admin():
+
+class Admin(Base):
     __tablename__ = 'admin'
     id = Column(Integer, primary_key=True, autoincrement=True, nullable=False)
 
     name = Column(VARCHAR(50), nullable=False)
-    photo = Column(VARCHAR(200), nullable=False)
-    tg = Column(VARCHAR(200), nullable=False)
-
+    photo = Column(VARCHAR(200))
+    tg = Column(VARCHAR(200))
+    job = Column(VARCHAR(100))
